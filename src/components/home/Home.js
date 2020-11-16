@@ -9,7 +9,7 @@ class Home extends React.Component {
   // prende el loader antes de cargar el componente
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = { loader: { encendido: false } };
   }
 
   render() {

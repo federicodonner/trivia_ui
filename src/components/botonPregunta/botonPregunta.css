@@ -1,0 +1,15 @@
+.botonPregunta {
+  width: 100%;
+  font-weight: 1000;
+  font-size: 18pt;
+  grid-column: 1;
+}
+
+.rollover {
+  background-color: #a00000;
+  cursor: pointer;
+}
+
+.respondida {
+  background-color: #000;
+}
