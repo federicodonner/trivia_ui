@@ -1,0 +1,45 @@
+.pieEquipos {
+  height: 90px;
+  background-color: #333;
+  padding: 10px;
+  padding-right: 50px;
+  color: white;
+  display: grid;
+  grid-auto-columns: auto;
+}
+
+.logoLudicamente {
+  grid-row: 1;
+  background-image: url(/images/logoLudicamente300.png);
+  width: 146px;
+  height: 68px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  margin-top: 8px;
+  margin-left: 20px;
+}
+
+.etiquetasEquiposPuntajes {
+  grid-row: 1;
+}
+
+.etiquetasEquiposPuntajes span {
+  display: block;
+  font-weight: 1000;
+  margin-top: 12px;
+  margin-bottom: 17px;
+  text-align: center;
+}
+
+.etiquetasEquiposPuntajes .nombreEquipo {
+  border-bottom: 1px solid #0289bd;
+}
+
+.etiquetasEquiposPuntajes .puntajes {
+  font-size: 24pt;
+  margin-bottom: 0px;
+}
+
+.etiquetasEquiposPuntajes.activo {
+  background-color: #0289bd;
+}

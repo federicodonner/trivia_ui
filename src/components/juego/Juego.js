@@ -1,6 +1,7 @@
 import React from "react";
 import "./juego.css";
 import BotonPregunta from "../botonPregunta/BotonPregunta";
+import PieEquipos from "../pieEquipos/PieEquipos";
 import { accederAPI } from "../../utils/fetchFunctions";
 
 class Juego extends React.Component {
@@ -18,11 +19,15 @@ class Juego extends React.Component {
     // FALTA NAVEGAR A NOT FOUND
   };
 
+  navegarAPregunta = (hashPregunta) => {
+    this.props.history.push({ pathname: "pregunta/" + hashPregunta });
+  };
+
   componentDidMount() {
     // Va a buscar el juego indicado en el hash
     accederAPI(
       "GET",
-      "juego/" + this.props.match.params.id,
+      "juegohash/" + this.props.match.params.id,
       null,
       this.callbackGETJuego,
       this.callbackErrorGETJuego
@@ -32,7 +37,7 @@ class Juego extends React.Component {
   // prende el loader antes de cargar el componente
   constructor(props) {
     super(props);
-    this.state = { loader: { encendido: true } };
+    this.state = { loader: { encendido: true, texto: "Cargando juego" } };
   }
 
   render() {
@@ -41,10 +46,8 @@ class Juego extends React.Component {
         <div className="scrollable">
           {this.state && this.state.loader.encendido && (
             <div className="loader-container">
-              <p>
-                <img className="loader" src="/images/loader.svg" />
-              </p>
-              <p className={"negrita"}>{this.state.loader.texto}</p>
+              <img className="loader" src="/images/cerebroLudicamente.png" />
+              <p>{this.state.loader.texto}</p>
             </div>
           )}
           {this.state && !this.state.loader.encendido && (
@@ -76,6 +79,7 @@ class Juego extends React.Component {
                               <BotonPregunta
                                 key={pregunta.id}
                                 pregunta={pregunta}
+                                navegarAPregunta={this.navegarAPregunta}
                               />
                             );
                           })}
@@ -84,25 +88,7 @@ class Juego extends React.Component {
                     );
                   })}
                 </div>
-                <div className="pieEquipos">
-                  <div className="logoLudicamente"></div>
-
-                  {this.state.juego.equipos.map((equipo) => {
-                    return (
-                      <div
-                        key={equipo.id}
-                        className={
-                          equipo.activo == 1
-                            ? "etiquetasEquiposPuntajes activo"
-                            : "etiquetasEquiposPuntajes"
-                        }
-                      >
-                        <span className="nombreEquipo">{equipo.nombre}</span>
-                        <span className="puntajes">{equipo.puntaje}</span>
-                      </div>
-                    );
-                  })}
-                </div>
+                <PieEquipos equipos={this.state.juego.equipos} />
               </div>
             </>
           )}

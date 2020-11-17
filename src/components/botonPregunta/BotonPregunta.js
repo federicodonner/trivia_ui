@@ -12,6 +12,10 @@ class BotonPregunta extends React.Component {
     this.setState({ rollover: false });
   };
 
+  navegarAPregunta = () => {
+    this.props.navegarAPregunta(this.props.pregunta.hash);
+  };
+
   componentDidMount() {
     this.setState({ rollover: false });
   }
@@ -30,6 +34,7 @@ class BotonPregunta extends React.Component {
             }
             onMouseEnter={this.onMouseEnterPregunta}
             onMouseLeave={this.onMouseLeavePregunta}
+            onClick={this.navegarAPregunta}
           >
             <span> {this.props.pregunta.puntaje}</span>
           </div>
