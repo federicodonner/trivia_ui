@@ -20,7 +20,8 @@
 .containerCategorias {
   height: 489px;
   display: grid;
-  grid-auto-columns: auto;
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
 }
 
 .categoria {
