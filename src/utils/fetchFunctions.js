@@ -1,11 +1,3 @@
-import variables from "../var/variables.js";
-
-// Devuelve el token de local storage para los requests
-// No se exporta porque es utilizada sólo desde este archivo
-function getTokenDesdeLS() {
-  return localStorage.getItem(variables.LSLoginToken);
-}
-
 // Guarda datos en LS
 export function guardarEnLS(key, datosGuardar) {
   localStorage.setItem(key, datosGuardar);
@@ -29,14 +21,12 @@ export function accederAPI(
   callbackExito,
   callbackFallo
 ) {
-  var accessToken = getTokenDesdeLS();
-  const url = variables.api_url + "/" + endpoint;
+  const url = process.env.REACT_APP_API_URL + "/" + endpoint;
   var fetchConfig = {
     method: verbo,
     headers: {
       "Content-Type": "application/json",
       "accept-encoding": "gzip, deflate",
-      Authorization: "Bearer " + accessToken,
     },
   };
   if (data) {
@@ -49,7 +39,7 @@ export function accederAPI(
     new Promise(function (resolve, reject) {
       setTimeout(
         () => reject(new Error("request timeout")),
-        variables.APITimeout
+        process.env.REACT_APP_API_TIMEOUT
       );
     }),
   ])

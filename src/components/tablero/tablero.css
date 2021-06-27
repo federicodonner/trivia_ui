@@ -1,0 +1,27 @@
+.containerCategorias {
+  display: grid;
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
+}
+
+.categoria {
+  background-color: #00adef;
+  grid-row: 1;
+  text-align: center;
+  color: white;
+  font-weight: 600;
+  padding-top: 10px;
+  font-size: 13pt;
+}
+
+.categoria.par {
+  background-color: #0289bd;
+}
+
+.containerBotonesPreguntas {
+  display: grid;
+  grid-auto-rows: auto;
+  height: 420px;
+  justify-items: center;
+  align-items: center;
+}

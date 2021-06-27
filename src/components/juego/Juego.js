@@ -1,101 +1,126 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./juego.css";
-import BotonPregunta from "../botonPregunta/BotonPregunta";
+import Tablero from "../tablero/Tablero";
+import Pregunta from "../pregunta/Pregunta";
 import PieEquipos from "../pieEquipos/PieEquipos";
 import { accederAPI } from "../../utils/fetchFunctions";
 
-class Juego extends React.Component {
-  state: {};
+export default function Juego(props) {
+  const [loader, setLoader] = useState(true);
+  const [juego, setJuego] = useState(null);
+  const [equipos, setEquipos] = useState(null);
 
-  // Función ejecutada cuando la API devuelve los detalles del juego
-  callbackGETJuego = (juego) => {
-    this.setState({ juego: juego, loader: { encendido: false } });
-  };
+  const [juegoLoader, setJuegoLoader] = useState(false);
+  const [mostrarTablero, setMostrarTablero] = useState(true);
 
-  // Función ejecutada cuando hubo un error en la API al devolver el juego
-  callbackErrorGETJuego = (error) => {
-    // Muestra el error al usuario
-    alert(error.detail);
-    // FALTA NAVEGAR A NOT FOUND
-  };
+  const [pregunta, setPregunta] = useState(null);
 
-  navegarAPregunta = (hashPregunta) => {
-    this.props.history.push({ pathname: "pregunta/" + hashPregunta });
-  };
-
-  componentDidMount() {
+  useEffect(() => {
     // Va a buscar el juego indicado en el hash
     accederAPI(
       "GET",
-      "juegohash/" + this.props.match.params.id,
+      "trivia_juegohash/" + props.match.params.id,
       null,
-      this.callbackGETJuego,
-      this.callbackErrorGETJuego
+      (respuesta) => {
+        setEquipos(respuesta.equipos);
+        setJuego(respuesta);
+        setLoader(false);
+      },
+      (respuesta) => {
+        alert(respuesta.detail);
+      }
+    );
+  }, []);
+
+  // Siempre que se carga una pregunta, apaga el loader
+  useEffect(() => {
+    setJuegoLoader(false);
+  }, [pregunta]);
+
+  // Función ejecutada por el tablero cuando se selecciona una pregunta
+  function navegarAPregunta(hashPregunta) {
+    // Enciende el loader del main
+    setJuegoLoader(true);
+    // Va a buscar el contenido de la pregunta
+    accederAPI(
+      "GET",
+      "trivia_preguntahash/" + hashPregunta,
+      null,
+      (respuesta) => {
+        setPregunta(respuesta);
+      },
+      (respuesta) => {
+        alert(respuesta.detail);
+        setJuegoLoader(false);
+      }
     );
   }
 
-  // prende el loader antes de cargar el componente
-  constructor(props) {
-    super(props);
-    this.state = { loader: { encendido: true, texto: "Cargando juego" } };
+  function volverATablero() {
+    setJuegoLoader(true);
+    setPregunta(null);
   }
 
-  render() {
-    return (
-      <div className="app-view cover">
-        <div className="scrollable">
-          {this.state && this.state.loader.encendido && (
-            <div className="loader-container">
-              <img className="loader" src="/images/cerebroLudicamente.png" />
-              <p>{this.state.loader.texto}</p>
-            </div>
-          )}
-          {this.state && !this.state.loader.encendido && (
-            <>
-              <div className="content">
-                <div className="cabezalEmpresa">
-                  <div className="nombreEmpresa">
-                    {this.state.juego.empresa}
-                  </div>
-                  <div className="taglineJuego">{this.state.juego.tagline}</div>
-                </div>
-                <div className="containerCategorias">
-                  {this.state.juego.categorias.map((categoria) => {
-                    return (
-                      <div
-                        key={categoria.id}
-                        className={
-                          categoria.count % 2 != 0
-                            ? "categoria"
-                            : "categoria par"
-                        }
-                      >
-                        <div className="tituloCategoria">
-                          {categoria.nombre}
-                        </div>
-                        <div className="containerBotonesPreguntas">
-                          {categoria.preguntas.map((pregunta) => {
-                            return (
-                              <BotonPregunta
-                                key={pregunta.id}
-                                pregunta={pregunta}
-                                navegarAPregunta={this.navegarAPregunta}
-                              />
-                            );
-                          })}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-                <PieEquipos equipos={this.state.juego.equipos} />
+  // Función ejecutada cuando vuelve de responder una pregunta
+  function actualizarEquipos(equipos) {
+    // Marca la pregunta como respondida en el tablero
+    var juegoParaEditar = JSON.parse(JSON.stringify(juego));
+    juegoParaEditar.categorias.forEach((categoria) => {
+      categoria.preguntas.forEach((preguntaEnCategoria) => {
+        if (preguntaEnCategoria.id == pregunta.id) {
+          preguntaEnCategoria.respondida = 1;
+        }
+      });
+    });
+    setJuego(juegoParaEditar);
+
+    setEquipos(equipos);
+    setPregunta(null);
+  }
+
+  return (
+    <div className="app-view cover">
+      <div className="scrollable">
+        {loader && (
+          <div className="loader-container">
+            <img className="loader" src="/images/cerebroLudicamente.png" />
+            <p>Cargando juego</p>
+          </div>
+        )}
+        {!loader && (
+          <>
+            <div className="content">
+              <div className="cabezalEmpresa">
+                <div className="nombreEmpresa">{juego.empresa}</div>
+                <div className="taglineJuego">{juego.tagline}</div>
               </div>
-            </>
-          )}
-        </div>
+              <div className="containerMain">
+                {juegoLoader && (
+                  <div className="loader-container">
+                    <img
+                      className="loader"
+                      src="/images/cerebroLudicamente.png"
+                    />
+                    <p>Cargando pregunta</p>
+                  </div>
+                )}
+                {!juegoLoader && !pregunta && (
+                  <Tablero juego={juego} navegarAPregunta={navegarAPregunta} />
+                )}
+                {!juegoLoader && pregunta && (
+                  <Pregunta
+                    juego={juego}
+                    pregunta={pregunta}
+                    volverATablero={volverATablero}
+                    actualizarEquipos={actualizarEquipos}
+                  />
+                )}
+              </div>
+              <PieEquipos equipos={equipos} />
+            </div>
+          </>
+        )}
       </div>
-    );
-  }
+    </div>
+  );
 }
-
-export default Juego;

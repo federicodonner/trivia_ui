@@ -17,35 +17,17 @@
   font-size: 19pt;
 }
 
-.containerCategorias {
-  height: 489px;
-  display: grid;
-  grid-auto-columns: 1fr;
-  grid-auto-flow: column;
-}
-
-.categoria {
-  background-color: #00adef;
-  grid-row: 1;
-  text-align: center;
-  color: white;
-  font-weight: 600;
-  padding-top: 10px;
-  font-size: 13pt;
-}
-
-.categoria.par {
-  background-color: #0289bd;
+.containerMain {
+  height: 479px;
 }
 
 .tituloCategoria {
   margin-bottom: 25px;
 }
 
-.containerBotonesPreguntas {
-  display: grid;
-  grid-auto-rows: auto;
-  height: 420px;
-  justify-items: center;
-  align-items: center;
+.containerMain .loader-container {
+  padding-top: 140px;
+}
+.containerMain .loader-container .loader {
+  margin-top: 0px;
 }
